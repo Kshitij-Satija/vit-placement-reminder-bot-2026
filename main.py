@@ -445,10 +445,10 @@ async def on_shutdown():
     global telegram_app
     if telegram_app:
         logging.info("🛑 Stopping Telegram bot...")
-        await telegram_app.updater.stop()
         await telegram_app.stop()
         await telegram_app.shutdown()
         logging.info("🛑 Telegram bot stopped.")
+
     if scheduler.running:
         logging.info("🛑 Stopping APScheduler...")
         scheduler.shutdown()
