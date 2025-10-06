@@ -426,10 +426,11 @@ async def run_bot():
     telegram_app.add_handler(CommandHandler("unblock", unblock_cmd))
     telegram_app.add_handler(CommandHandler("listblocked", list_blocked))
 
+    logging.info("🤖 Telegram bot starting in background...")
     await telegram_app.initialize()
     await telegram_app.start()
-    await telegram_app.updater.start_polling()
-    logging.info("🤖 Telegram bot started in background...")
+    # ✅ NEW — use `run_polling()` in a task-safe way
+    asyncio.create_task(telegram_app.run_polling())
 
 @app.on_event("startup")
 async def on_startup():
