@@ -429,13 +429,12 @@ async def run_bot():
     logging.info("🤖 Telegram bot starting in background...")
     await telegram_app.initialize()
     await telegram_app.start()
-    # ✅ NEW — use `run_polling()` in a task-safe way
-    asyncio.create_task(telegram_app.run_polling())
+    await telegram_app.updater.start_polling(drop_pending_updates=True)  # Add drop_pending_updates to skip any old updates on restart
 
 @app.on_event("startup")
 async def on_startup():
     # Start the Telegram bot
-    asyncio.create_task(run_bot())
+    await run_bot()  # Change to await instead of create_task
     # Schedule keep-alive pings to /health endpoint
     await keep_alive(f"{SERVER_URL}/health", scheduler)
     logging.info("🌐 FastAPI server started on port 5000")
@@ -445,8 +444,8 @@ async def on_shutdown():
     global telegram_app
     if telegram_app:
         logging.info("🛑 Stopping Telegram bot...")
+        await telegram_app.updater.stop()
         await telegram_app.stop()
-        await telegram_app.shutdown()
         logging.info("🛑 Telegram bot stopped.")
 
     if scheduler.running:
