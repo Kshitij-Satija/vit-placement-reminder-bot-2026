@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pymongo
+python-telegram-bot==20.8
+apscheduler
+aiohttp
+python-dotenv
+bson
